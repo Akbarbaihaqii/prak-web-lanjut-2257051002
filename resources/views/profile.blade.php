@@ -1,73 +1,78 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profil</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Profile</title>
     <style>
-        body, html {
-            height: 100%;
-            margin: 0;
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #00b0ff;
+            background-image: url('https://wallpapercave.com/wp/wp9027542.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
             display: flex;
+            justify-content: center;
             align-items: center;
-            justify-content: center;
-            background-color: #f8f9fa;
+            height: 100vh;
+            margin: 0;
         }
-        .profile-card {
-            max-width: 500px;
-            padding: 30px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            border-radius: 10px;
+
+        .card {
             background-color: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
             text-align: center;
-        }
-        .profile-card h2 {
-            margin-bottom: 20px;
-        }
-        .profile-card img {
             width: 350px;
-            height: 350px;
-            border-radius: 50%;
-            object-fit: cover;
+            transform: scale(1);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+
+        .img-bx {
             margin-bottom: 20px;
         }
-        .profile-info {
-            list-style: none;
-            padding: 0;
+
+        .img-bx img {
+            width: 120px;
         }
-        .profile-info li {
-            margin-bottom: 15px;
-            font-size: 1.1em;
-            display: flex;
-            justify-content: center;
-        }
-        .profile-info li span:first-child {
+
+        .detail h2 {
+            font-size: 20px; /* Ukuran font yang sama untuk nama, npm, dan kelas */
             font-weight: bold;
-            width: 80px;
-            text-align: left;
+            color: #333;
+            line-height: 1.5;
         }
-        .profile-info li span:last-child {
-            flex-grow: 1;
-            text-align: left;
+
+        /* Efek bayangan untuk teks */
+        .detail h2 {
+            text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
         }
     </style>
 </head>
+
 <body>
-    <div class="profile-card">
-        <!-- Gambar Profil -->
-        <img src="{{ asset('images/profile1.jpg') }}" alt="Foto Profil">
-        
-        <h2>Profil Saya</h2>
-        <ul class="profile-info">
-            <li><span>Nama:</span> <span>{{ $nama }}</span></li>
-            <li><span>Kelas:</span> <span>{{ $kelas }}</span></li>
-            <li><span>NPM:</span> <span>{{ $npm }}</span></li>
-        </ul>
+
+    <div class="card">
+        <div class="img-bx">
+            <img src="https://www.logo.wine/a/logo/Laravel/Laravel-Logo.wine.svgg" alt="img" />
+        </div>
+        <div class="content">
+            <div class="detail">
+                <h2>
+                    {{ $nama }}<br />
+                    {{ $npm }}<br />
+                    {{ $nama_kelas ?? 'Kelas tidak ditemukan' }}
+                </h2>
+            </div>
+        </div>
     </div>
 
-    <!-- Bootstrap JS (Opsional) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
