@@ -2,34 +2,34 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\CreateUserRequest;
+use App\Models\Kelas;
+use App\Models\UserModel;
 
 class UserController extends Controller
 {
-    public function profile($nama = '', $kelas = '', $npm = '')
-{
-    $data = [
-        'nama' => $nama,
-        'kelas' => $kelas,
-        'npm' => $npm
-    ];
+    // Menampilkan halaman form create_user
+    public function create()
+    {
+        return view('create_user', [
+            'kelas' => Kelas::all(), // Mengambil semua data kelas untuk dropdown
+        ]);
+    }
 
-    return view('profile', $data);
-}
+    // Proses menyimpan data user dengan validasi dari CreateUserRequest
+    public function store(CreateUserRequest $request)
+    {
+        // Simpan data user ke database
+        $user = UserModel::create($request->validated());
 
-public function create(){
-    return view('create_user');
-}
+        // Memuat relasi kelas untuk mendapatkan nama_kelas
+        $user->load('kelas');
 
-public function store(Request $request)
-{
-    $data = [
-        'nama' => $request->input('nama'),
-        'kelas' => $request->input('kelas'),
-        'npm' => $request->input('npm'),
-   ];
-
-   return view('profile', $data);
-}
-
+        // Setelah berhasil menyimpan, arahkan ke halaman profile dan kirim data user
+        return view('profile', [
+            'nama' => $user->nama,
+            'npm' => $user->npm,
+            'nama_kelas' => $user->kelas->nama_kelas ?? 'Kelas tidak ditemukan',
+        ]);
+    }
 }
