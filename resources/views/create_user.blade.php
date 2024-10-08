@@ -1,161 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
+@extends('layouts.app')
+
+@section('content')     
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Form Create User</title>
+    <title>Form User</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+    
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #FFDEE9, #B5FFFC); 
+            font-family: 'Poppins', sans-serif;
+            background-color: #f2f2f2; /* Warna latar belakang abu-abu lembut */
+            margin: 0;
             height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            margin: 0;
-            background-image: url('https://images.unsplash.com/photo-1542281286-9e0a16bb7366'); /* Gambar background baru */
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
         }
 
-        .card {
-            background: #fff;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15); 
-            width: 380px;
+        .form-container {
+            background-color: #ffffff; /* Latar belakang putih */
+            padding: 30px;
+            border-radius: 10px; /* Radius sudut */
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1); /* Bayangan untuk efek kedalaman */
+            width: 350px; /* Lebar form */
             text-align: center;
-            position: relative;
-            overflow: hidden;
         }
 
         h2 {
-            margin-bottom: 30px;
-            font-size: 24px;
-            color: #444;
-            font-weight: bold;
-        }
-
-        .form-group {
+            color: #333; /* Warna teks lebih gelap */
             margin-bottom: 20px;
-            text-align: left;
+            font-weight: 600;
         }
 
         label {
-            font-size: 14px;
-            font-weight: bold;
-            color: #666;
+            display: block;
+            font-weight: 500;
+            margin-bottom: 5px;
+            text-align: left;
+            color: #333;
         }
 
-        input[type="text"],
-        select {
+        input[type="text"], select {
             width: 100%;
-            padding: 12px;
+            padding: 10px;
             margin-top: 5px;
-            border: 2px solid #B5FFFC;
-            border-radius: 8px; 
-            font-size: 16px;
-            box-sizing: border-box;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 15px;
+            border-radius: 5px; /* Radius kecil untuk input */
+            border: 1px solid #ccc; /* Border abu-abu */
+            font-size: 14px;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1); /* Bayangan dalam untuk input */
         }
 
-        input[type="text"]:focus,
-        select:focus {
-            outline: none;
-            border-color: #FFDEE9;
-            box-shadow: 0 0 10px rgba(255, 222, 233, 0.5); 
-        }
-
-        button {
-            background: linear-gradient(135deg, #FF7EB3, #FF758C);
+        input[type="submit"] {
+            background-color: #007bff; /* Warna tombol biru */
             color: white;
-            padding: 12px 30px;
             border: none;
-            border-radius: 30px;
-            font-size: 16px;
+            padding: 10px;
+            border-radius: 5px; /* Sedikit radius */
             cursor: pointer;
-            transition: background 0.3s ease, box-shadow 0.3s ease;
-            margin-top: 20px;
+            font-size: 16px;
             width: 100%;
+            transition: background-color 0.3s ease;
         }
 
-        button:hover {
-            background: linear-gradient(135deg, #FF758C, #FF7EB3);
-            box-shadow: 0 10px 20px rgba(255, 120, 155, 0.3); 
+        input[type="submit"]:hover {
+            background-color: #0056b3; /* Warna lebih gelap saat hover */
         }
 
-        .image {
-            position: absolute;
-            top: -50px;
-            right: -50px;
-            width: 150px;
-            height: 150px;
-            background-image: url('https://cdn-icons-png.flaticon.com/512/3649/3649463.png'); 
-            background-size: cover;
-            background-position: center;
-            opacity: 0.1; 
+        .form-container input[type="text"]::placeholder {
+            color: #999; /* Placeholder abu-abu */
         }
 
-        .circle {
-            position: absolute;
-            width: 180px;
-            height: 180px;
-            border-radius: 50%;
-            background: rgba(255, 120, 155, 0.15);
-            top: -80px;
-            left: -80px;
-        }
-
-        .error {
+        .text-danger {
             color: red;
             font-size: 12px;
+            text-align: left;
         }
     </style>
 </head>
+
 <body>
-    <div class="card">
-        <div class="circle"></div>
-        <div class="image"></div>
-        <h2>Create User</h2>
 
-        <form action="{{ route('user.store') }}" method="POST">
-            @csrf
-            <div class="form-group">
-                <label for="nama">Nama:</label>
-                <input type="text" id="nama" name="nama" value="{{ old('nama') }}" >
-                @error('nama')
-                    <div class="error">{{ $message }}</div>
-                @enderror
-            </div>
+<div class="form-container">
+    <h2>Masukan data anda</h2>
+    
+    <form action="{{ route('user.store') }}" method="POST">
+        @csrf
+        <label for="nama">Nama:</label>
+        <input type="text" id="nama" name="nama" placeholder="Masukkan nama Anda" value="{{ old('nama') }}">
+        @if ($errors->has('nama'))
+            <div class="text-danger">{{ $errors->first('nama') }}</div>
+        @endif
 
-            <div class="form-group">
-                <label for="npm">NPM:</label>
-                <input type="text" id="npm" name="npm" value="{{ old('npm') }}" >
-                @error('npm')
-                    <div class="error">{{ $message }}</div>
-                @enderror
-            </div>
+        <label for="npm">NPM :</label>
+        <input type="text" id="npm" name="npm" placeholder="Masukkan NPM Anda" value="{{ old('npm') }}">
+        @if ($errors->has('npm'))
+            <div class="text-danger">{{ $errors->first('npm') }}</div>
+        @endif
 
-            <div class="form-group">
-                <label for="kelas">Kelas:</label>
-                <select name="kelas_id" id="kelas_id" >
-                    @foreach ($kelas as $kelasItem)
-                    <option value="{{ $kelasItem->id }}" {{ old('kelas_id') == $kelasItem->id ? 'selected' : '' }}>
-                        {{ $kelasItem->nama_kelas }}
-                    </option>
-                    @endforeach
-                </select>
-                @error('kelas_id')
-                    <div class="error">{{ $message }}</div>
-                @enderror
-            </div>
+        <label for="kelas">Kelas :</label>
+        <select name="kelas_id" id="kelas_id">
+            @foreach ($kelas as $kelasItem)
+            <option value="{{ $kelasItem->id }}" {{ old('kelas_id') == $kelasItem->id ? 'selected' : '' }}>
+                {{ $kelasItem->nama_kelas }}
+            </option>
+            @endforeach
+        </select>
+        @if ($errors->has('kelas_id'))
+            <div class="text-danger">{{ $errors->first('kelas_id') }}</div>
+        @endif
 
-            <div class="form-group">
-                <button type="submit">Submit</button>
-            </div>
-        </form>
-    </div>
+        <input type="submit" value="Submit">
+    </form>
+</div>
+@endsection
 </body>
+
 </html>
