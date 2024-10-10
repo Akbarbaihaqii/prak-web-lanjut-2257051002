@@ -102,9 +102,8 @@
     </style>
 
     <div class="table-container">
-        <a href="{{ route('user.create') }}" class="btn-add-user">
-            <i class="fas fa-plus"></i> Tambah User
-        </a>
+    <a href="{{ route('user.create') }}" class="btn btn-success"><i class="fas fa-plus"></i>Tambah User</a>
+
 
         <table class="table table-hover">
             <thead>
@@ -123,10 +122,13 @@
                         <td>{{ $user->nama }}</td>
                         <td>{{ $user->npm }}</td>
                         <td>{{ $user->nama_kelas }}</td>
-                        <td>
+                        
                             <!-- Tombol lihat -->
-                            
-                        </td>
+                            <td>
+            <a href="{{ route('user.show', $user->id) }}" class="btn btn-primary">Detail</a>
+        </td>
+
+                        
                     </tr>
                 @endforeach
             </tbody>

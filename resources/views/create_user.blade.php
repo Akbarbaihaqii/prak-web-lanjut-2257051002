@@ -87,7 +87,7 @@
 <div class="form-container">
     <h2>Masukan data anda</h2>
     
-    <form action="{{ route('user.store') }}" method="POST">
+    <form action="{{ route('user.store') }}" method="post" enctype="multipart/form-data">
         @csrf
         <label for="nama">Nama:</label>
         <input type="text" id="nama" name="nama" placeholder="Masukkan nama Anda" value="{{ old('nama') }}">
@@ -100,6 +100,9 @@
         @if ($errors->has('npm'))
             <div class="text-danger">{{ $errors->first('npm') }}</div>
         @endif
+
+        <label for="foto">foto</label><br>
+        <input type="file" id="foto" name="foto"><br><br>
 
         <label for="kelas">Kelas :</label>
         <select name="kelas_id" id="kelas_id">

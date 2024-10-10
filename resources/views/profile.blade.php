@@ -1,78 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #00b0ff;
-            background-image: url('https://wallpapercave.com/wp/wp9027542.jpg');
-            background-size: cover;
-            background-repeat: no-repeat;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
+            background-color: white; /* Warna background biru lembut */
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
         }
-
-        .card {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+        .profile-container {
+            background-color: #DCDCDC; /* Background putih untuk kotak profil */
+            padding: 40px; 
+            border-radius: 10px;
+            max-width: 400px; /* Atur lebar maksimal */
+            width: 100%; 
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
             text-align: center;
-            width: 350px;
-            transform: scale(1);
-            transition: transform 0.3s ease;
         }
-
-        .card:hover {
-            transform: scale(1.05);
+        .profile-img {
+            width: 150px; /* Ukuran gambar */
+            height: 150px; /* Ukuran gambar */
+            border-radius: 50%; /* Membuat gambar menjadi lingkaran */
+            object-fit: cover; /* Gambar tetap proporsional */
+            margin-bottom: 20px; /* Jarak antara gambar dan teks */
         }
-
-        .img-bx {
-            margin-bottom: 20px;
+        .info-box {
+            background-color: white; /* Warna biru untuk kotak info */
+            color: black; /* Warna teks putih */
+            border-radius: 50px; /* Membuat sudut menjadi lonjong */
+            padding: 10px 0; /* Jarak vertikal dalam kotak */
+            margin-bottom: 10px; /* Jarak antar kotak */
         }
-
-        .img-bx img {
-            width: 120px;
-        }
-
-        .detail h2 {
-            font-size: 20px; /* Ukuran font yang sama untuk nama, npm, dan kelas */
-            font-weight: bold;
-            color: #333;
-            line-height: 1.5;
-        }
-
-        /* Efek bayangan untuk teks */
-        .detail h2 {
-            text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
+        .info-box.class-name {
+            background-color: white; /* Warna abu-abu untuk kotak kelas */
+            color: black; /* Warna teks hitam */
         }
     </style>
 </head>
 
 <body>
-
-    <div class="card">
-        <div class="img-bx">
-            <img src="https://www.logo.wine/a/logo/Laravel/Laravel-Logo.wine.svgg" alt="img" />
-        </div>
-        <div class="content">
-            <div class="detail">
-                <h2>
-                    {{ $nama }}<br />
-                    {{ $npm }}<br />
-                    {{ $nama_kelas ?? 'Kelas tidak ditemukan' }}
-                </h2>
-            </div>
-        </div>
+<div class="profile-container">
+    <img class="profile-img" src="{{ asset($user->foto) }}" alt="Foto Profil">
+    <div class="info-box">
+        {{ $user->nama }}
     </div>
+    <div class="info-box class-name">
+        {{ $user->nama_kelas }}
+    </div>
+    <div class="info-box">
+        {{ $user->npm }}
+    </div>
+</div>
 
 </body>
-
 </html>
