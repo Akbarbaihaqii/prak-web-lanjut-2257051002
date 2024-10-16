@@ -115,7 +115,7 @@
         @if ($errors->has('kelas_id'))
             <div class="text-danger">{{ $errors->first('kelas_id') }}</div>
         @endif
-
+        <a href="{{ route('user.list') }}" class="btn-list-user">List User</a>
         <input type="submit" value="Submit">
     </form>
 </div>
