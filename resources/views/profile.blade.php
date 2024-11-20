@@ -99,16 +99,27 @@
 
     <div class="info-box">
         <div class="info">
-            <span class="label">NPM :</span>
-            <span class="value">{{ $user->npm }}</span>
+            <span class="label">Jurusan :</span>
+            <span class="value">{{ $user->jurusan }}</span>
         </div>
     </div>
 
     <div class="info-box">
         <div class="info">
-            <span class="label">Kelas :</span>
-            <span class="value">{{ $nama_kelas ?? 'Kelas tidak ditemukan' }}</span>
+            <span class="label">Fakultas :</span>
+            <span class="value">{{ $user->fakultas->nama_fakultas ?? 'Fakultas tidak ditemukan' }}</span> <!-- Assuming 'fakultas' relation is defined -->
         </div>
+    </div>
+
+    <div class="info-box">
+        <div class="info">
+            <span class="label">Semester :</span>
+            <span class="value">{{ $user->semester }}</span>
+        </div>
+    </div>
+
+    <div class="card-footer">
+        <a href="{{ route('user.edit', $user->id) }}" class="btn-edit">Edit Profil</a>
     </div>
 </div>
 

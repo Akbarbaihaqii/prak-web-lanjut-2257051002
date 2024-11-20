@@ -2,7 +2,7 @@
 <html lang="en">
 @extends('layouts.app')
 
-@section('content')     
+@section('content')
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,7 +12,7 @@
     <style>
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #f2f2f2; /* Warna latar belakang abu-abu lembut */
+            background-color: #f2f2f2;
             margin: 0;
             height: 100vh;
             display: flex;
@@ -20,17 +20,24 @@
             align-items: center;
         }
 
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
         .form-container {
-            background-color: #ffffff; /* Latar belakang putih */
+            background-color: #ffffff;
             padding: 30px;
-            border-radius: 10px; /* Radius sudut */
-            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1); /* Bayangan untuk efek kedalaman */
-            width: 350px; /* Lebar form */
+            border-radius: 10px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+            width: 350px;
             text-align: center;
         }
 
         h2 {
-            color: #333; /* Warna teks lebih gelap */
+            color: #333;
             margin-bottom: 20px;
             font-weight: 600;
         }
@@ -43,35 +50,35 @@
             color: #333;
         }
 
-        input[type="text"], select {
+        input[type="text"], select, input[type="number"], input[type="file"] {
             width: 100%;
             padding: 10px;
             margin-top: 5px;
             margin-bottom: 15px;
-            border-radius: 5px; /* Radius kecil untuk input */
-            border: 1px solid #ccc; /* Border abu-abu */
+            border-radius: 5px;
+            border: 1px solid #ccc;
             font-size: 14px;
-            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1); /* Bayangan dalam untuk input */
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
         }
 
-        input[type="submit"] {
-            background-color: #007bff; /* Warna tombol biru */
+        button[type="submit"] {
+            background-color: #007bff;
             color: white;
             border: none;
             padding: 10px;
-            border-radius: 5px; /* Sedikit radius */
+            border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
             width: 100%;
             transition: background-color 0.3s ease;
         }
 
-        input[type="submit"]:hover {
-            background-color: #0056b3; /* Warna lebih gelap saat hover */
+        button[type="submit"]:hover {
+            background-color: #0056b3;
         }
 
         .form-container input[type="text"]::placeholder {
-            color: #999; /* Placeholder abu-abu */
+            color: #999;
         }
 
         .text-danger {
@@ -84,42 +91,60 @@
 
 <body>
 
-<div class="form-container">
-    <h2>Masukan data anda</h2>
-    
-    <form action="{{ route('user.store') }}" method="post" enctype="multipart/form-data">
-        @csrf
-        <label for="nama">Nama:</label>
-        <input type="text" id="nama" name="nama" placeholder="Masukkan nama Anda" value="{{ old('nama') }}">
-        @if ($errors->has('nama'))
-            <div class="text-danger">{{ $errors->first('nama') }}</div>
-        @endif
+<div class="container">
+    <div class="form-container">
+        <h2>Masukan Data Anda</h2>
 
-        <label for="npm">NPM :</label>
-        <input type="text" id="npm" name="npm" placeholder="Masukkan NPM Anda" value="{{ old('npm') }}">
-        @if ($errors->has('npm'))
-            <div class="text-danger">{{ $errors->first('npm') }}</div>
-        @endif
+        <form action="{{ route('user.store') }}" method="post" enctype="multipart/form-data">
+            @csrf
+            <div class="form-group">
+                <label for="nama">Nama:</label>
+                <input type="text" id="nama" name="nama" placeholder="Masukkan Nama Anda" required>
+            </div>
 
-        <label for="foto">foto</label><br>
-        <input type="file" id="foto" name="foto"><br><br>
+            <label for="kelas">Kelas :</label>
+            <select name="kelas_id" id="kelas_id" required>
+                @foreach ($kelas as $kelasItem)
+                <option value="{{ $kelasItem->id }}">{{ $kelasItem->nama_kelas }}</option>
+                @endforeach
+            </select><br>
 
-        <label for="kelas">Kelas :</label>
-        <select name="kelas_id" id="kelas_id">
-            @foreach ($kelas as $kelasItem)
-            <option value="{{ $kelasItem->id }}" {{ old('kelas_id') == $kelasItem->id ? 'selected' : '' }}>
-                {{ $kelasItem->nama_kelas }}
-            </option>
-            @endforeach
-        </select>
-        @if ($errors->has('kelas_id'))
-            <div class="text-danger">{{ $errors->first('kelas_id') }}</div>
-        @endif
-        <a href="{{ route('user.list') }}" class="btn-list-user">List User</a>
-        <input type="submit" value="Submit">
-    </form>
+            <div class="form-group">
+                <label for="jurusan">Jurusan:</label>
+                <select name="jurusan" id="jurusan" required>
+                    <option value="" disabled selected>Pilih Jurusan</option>
+                    <option value="fisika">Fisika</option>
+                    <option value="kimia">Kimia</option>
+                    <option value="biologi">Biologi</option>
+                    <option value="matematika">Matematika</option>
+                    <option value="ilmu komputer">Ilmu Komputer</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="fakultas_id">Fakultas:</label>
+                <select name="fakultas_id" id="fakultas_id" required>
+                    <option value="" disabled selected>Pilih Fakultas</option>
+                    @foreach ($fakultas as $fakultasItem)
+                        <option value="{{ $fakultasItem->id }}">{{ $fakultasItem->nama_fakultas }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="semester">Semester:</label>
+                <input type="number" id="semester" name="semester" min="1" max="14" placeholder="Masukkan Semester (1-14)" required>
+            </div>
+
+            <div class="form-group">
+                <label for="foto">Foto Profil:</label>
+                <input type="file" id="foto" name="foto" accept="image/*">
+            </div>
+
+            <button type="submit">Simpan</button>
+        </form>
+    </div>
 </div>
 @endsection
 </body>
-
 </html>
