@@ -109,17 +109,20 @@
         }
     </style>
 
+
 <div class="container">
-    <h2>Daftar Pengguna</h2>
-    <a href="{{ route('user.create') }}" class="btn btn-primary mb-3">Tambah Pengguna Baru</a>
+    <h2>Daftar User</h2>
+    <a href="{{ route('user.create') }}" class="btn btn-primary mb-3">Tambah User Baru</a>
     
-    <table class="table">
+    <table class="table table-hover">
         <thead>
             <tr>
                 <th>ID</th>
                 <th>Nama</th>
-                <th>NPM</th>
-                <th>Kelas</th>
+                <th>Kelas</th> <!-- Adding Kelas column -->
+                <th>Jurusan</th>
+                <th>Fakultas</th>
+                <th>Semester</th>
                 <th>Foto</th>
                 <th>Aksi</th>
             </tr>
@@ -129,16 +132,18 @@
             <tr>
                 <td>{{ $user->id }}</td>
                 <td>{{ $user->nama }}</td>
-                <td>{{ $user->npm }}</td>
-                <td>{{ $user->nama_kelas }}</td>
+                <td>{{ $user->kelas->nama_kelas ?? '-' }}</td> <!-- Displaying Kelas -->
+                <td>{{ $user->jurusan }}</td>
+                <td>{{ $user->fakultas->nama_fakultas ?? '-' }}</td>
+                <td>{{ $user->semester }}</td>
                 <td>
                     <img src="{{ asset('storage/uploads/' . $user->foto) }}" class="profile-img" alt="Foto {{ $user->nama }}">
                 </td>
                 <td>
                     <div class="action-buttons">
-                        <a href="{{ route('user.show', $user->id) }}" class="btn btn-warning btn-sm">View</a>
-                        <a href="{{ route('user.edit', $user['id']) }}" class="btn btn-warning btn-sm">Edit</a>
-                        <form action="{{ route('user.destroy', $user['id']) }}" method="POST" style="display:inline-block;">
+                        <a href="{{ route('user.show', $user->id) }}" class="btn btn-info btn-sm">View</a>
+                        <a href="{{ route('user.edit', $user->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                        <form action="{{ route('user.destroy', $user->id) }}" method="POST" style="display:inline-block;">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger btn-sm"

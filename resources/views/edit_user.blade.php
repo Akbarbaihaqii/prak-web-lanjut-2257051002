@@ -93,42 +93,57 @@
 </head>
 
 <body>
-    <div class="form-container">
-        <h2>Edit User</h2>
-        <form action="{{ route('user.update', $user->id) }}" method="POST" enctype="multipart/form-data">
-            @csrf
-            @method('PUT')
-            
-            <label for="nama">Nama:</label>
-            <input type="text" id="nama" name="nama" value="{{ old('nama', $user->nama) }}">
-            @foreach($errors->get('nama') as $msg)
-                <p class="text-danger">{{ $msg }}</p>
+<div class="form-container">
+    <h2>Edit User</h2>
+    <form action="{{ route('user.update', $user->id) }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        @method('PUT')
+        
+        <label for="nama">Nama:</label>
+        <input type="text" id="nama" name="nama" value="{{ old('nama', $user->nama) }}">
+        @foreach($errors->get('nama') as $msg)
+            <p class="text-danger">{{ $msg }}</p>
+        @endforeach
+
+        <label for="kelas">Kelas:</label>
+        <select name="kelas_id" id="kelas_id" required>
+            @foreach ($kelas as $kelasItem)
+                <option value="{{ $kelasItem->id }}" {{ $kelasItem->id == $user->kelas_id ? 'selected' : '' }}>
+                    {{ $kelasItem->nama_kelas }}
+                </option>
             @endforeach
+        </select>
 
-            <label for="npm">NPM:</label>
-            <input type="text" id="npm" name="npm" value="{{ old('npm', $user->npm) }}">
-            @foreach($errors->get('npm') as $msg)
-                <p class="text-danger">{{ $msg }}</p>
+        <label for="jurusan">Jurusan:</label>
+        <select name="jurusan" id="jurusan" required>
+            <option value="fisika" {{ $user->jurusan == 'fisika' ? 'selected' : '' }}>Fisika</option>
+            <option value="kimia" {{ $user->jurusan == 'kimia' ? 'selected' : '' }}>Kimia</option>
+            <option value="biologi" {{ $user->jurusan == 'biologi' ? 'selected' : '' }}>Biologi</option>
+            <option value="matematika" {{ $user->jurusan == 'matematika' ? 'selected' : '' }}>Matematika</option>
+            <option value="ilmu komputer" {{ $user->jurusan == 'ilmu komputer' ? 'selected' : '' }}>Ilmu Komputer</option>
+        </select>
+
+        <label for="fakultas_id">Fakultas:</label>
+        <select name="fakultas_id" id="fakultas_id" required>
+            @foreach ($fakultas as $fakultasItem)
+                <option value="{{ $fakultasItem->id }}" {{ $fakultasItem->id == $user->fakultas_id ? 'selected' : '' }}>
+                    {{ $fakultasItem->nama_fakultas }}
+                </option>
             @endforeach
+        </select>
 
-            <label for="kelas">Kelas:</label>
-            <select name="kelas_id" id="kelas_id" required>
-                @foreach ($kelas as $kelasItem)
-                    <option value="{{ $kelasItem->id }}" {{ $kelasItem->id == $user->kelas_id ? 'selected' : '' }}>
-                        {{ $kelasItem->nama_kelas }}
-                    </option>
-                @endforeach
-            </select>
+        <label for="semester">Semester:</label>
+        <input type="number" id="semester" name="semester" min="1" max="14" value="{{ old('semester', $user->semester) }}" required>
 
-            <label for="foto">Foto:</label>
-            <input type="file" id="foto" name="foto">
-            <br><br>
-            @if($user->foto)
-                <img src="{{ asset('storage/uploads/' . $user->foto) }}" class="card-img-top" alt="Foto User" style="width: 100%; border-radius: 10px;">
-            @endif
-            <br><br>
-            <input type="submit" value="Submit">
-        </form>
-    </div>
+        <label for="foto">Foto:</label>
+        <input type="file" id="foto" name="foto">
+        <br><br>
+        @if($user->foto)
+            <img src="{{ asset('storage/uploads/' . $user->foto) }}" class="card-img-top" alt="Foto User" style="width: 100%; border-radius: 10px;">
+        @endif
+        <br><br>
+        <input type="submit" value="Submit">
+    </form>
+</div>
 </body>
 @endsection

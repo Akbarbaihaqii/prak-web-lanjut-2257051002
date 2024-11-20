@@ -3,162 +3,191 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Requests\UserControllerRequest;
 use App\Models\Kelas;
 use App\Models\UserModel;
-
-
+use App\Models\Fakultas;
 
 class UserController extends Controller
 {
     public $userModel;
     public $kelasModel;
+    public $fakultasModel;
 
-    public function __construct(){
-
+    public function __construct()
+    {
         $this->userModel = new UserModel();
         $this->kelasModel = new Kelas();
-}
+        $this->fakultasModel = new Fakultas(); // Inisialisasi model Fakultas
+    }
 
-public function index()
-{
-    $data = [
-        'title' => 'List User',
-        'users' => $this->userModel->getUser(),
-    ];
+    // List user
+    public function index()
+    {
+        $data = [
+            'title' => 'List User',
+            'users' => $this->userModel->getUser (),
+        ];
 
-    return view('list_user', $data);
-}
+        return view('list_user', $data);
+    }
 
+    // Profile user berdasarkan parameter
+    public function profile($nama = "", $kelas = "", $npm = "")
+    {
+        $data = [
+            'nama' => $nama,
+            'kelas' => $kelas,
+            'npm' => $npm
+        ];
 
-    public function profile($nama = “”, $kelas = “”, $npm =
-    “”)
-{
-    $data = [
-        'nama' => $nama,
-        'kelas' => $kelas,
-        'npm' => $npm
-    ];
+        return view('profile', $data);
+    }
 
-    return view('profile', $data);
-}
-
-public function create(){
-    $kelasModel = new Kelas();
-
-     $kelas = $kelasModel->getKelas();
-     $data = [  
-        'title' => 'Create User',
-        'kelas' => $kelas,
-            ];
+    // Form untuk membuat user
+    public function create()
+    {
+        $kelas = $this->kelasModel->getKelas();
+        $fakultas = $this->fakultasModel->all(); // Ambil semua fakultas dari database
+        $data = [  
+            'title' => 'Create User',
+            'kelas' => $kelas,
+            'fakultas' => $fakultas, // Tambahkan fakultas ke data yang dikirim
+        ];
 
         return view('create_user', $data);
+    }
 
-}
+    // Menyimpan data user
+    public function store(Request $request)
+    {
+        // Validasi input
+        $request->validate([
+            'nama' => 'required|string|max:255',
+            'kelas_id' => 'required|integer',
+            'jurusan' => 'required|in:fisika,kimia,biologi,matematika,ilmu komputer',
+            'semester' => 'required|integer|min:1|max:14',
+            'fakultas_id' => 'required|exists:fakultas,id', // Validasi fakultas_id harus ada di tabel fakultas
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
 
-public function store(Request $request)
-{
-    // Validasi input
-    $request->validate([
-        'nama' => 'required',
-        'npm' => 'required',
-        'kelas_id' => 'required',
-        'foto' => 'image|file|max:2048', // Validasi foto
-    ]);
-
-    // Proses upload foto
-    if ($request->hasFile('foto')) {
-        $file = $request->file('foto');
-        $filename = time() . '_' . $file->getClientOriginalName();
-        // Simpan file ke storage/public/uploads
-        $file->storeAs('uploads', $filename, 'public');
+        // Proses upload foto
+        if ($request->hasFile('foto')) {
+            $file = $request->file('foto');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->storeAs('uploads', $filename, 'public');
+        } else {
+            $filename = null; // Jika tidak ada foto yang diupload
+        }
 
         // Simpan data user ke database
         $this->userModel->create([
             'nama' => $request->input('nama'),
-            'npm' => $request->input('npm'),
             'kelas_id' => $request->input('kelas_id'),
-            'foto' => $filename, // Menyimpan nama file ke database
+            'jurusan' => $request->input('jurusan'),
+            'semester' => $request->input('semester'),
+            'fakultas_id' => $request->input('fakultas_id'),
+            'foto' => $filename,
         ]);
-    } else {
-        // Jika tidak ada foto, simpan null
-        $this->userModel->create([
-            'nama' => $request->input('nama'),
-            'npm' => $request->input('npm'),
-            'kelas_id' => $request->input('kelas_id'),
-            'foto' => null,
-        ]);
+
+        // Redirect ke halaman list user setelah berhasil menyimpan data
+        return redirect()->route('user.list')->with('success', 'User   berhasil ditambahkan');
     }
 
-    return redirect()->to('/')->with('success', 'User Berhasil dibuat');
-}
+    // Update data user berdasarkan ID
+    public function update(Request $request, $id)
+    {
+        $user = UserModel::findOrFail($id);
 
-public function edit($id){
+        $request->validate([
+            'nama' => 'required|string|max:255',
+            'kelas_id' => 'required|integer',
+            'jurusan' => 'required|in:fisika,kimia,biologi,matematika,ilmu komputer',
+            'semester' => 'required|integer|min:1|max:14',
+            'fakultas_id' => 'required|exists:fakultas,id',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
 
-    $user = UserModel::findOrFail($id);
-    $kelasModel = new Kelas();
-    $kelas = $kelasModel-> getKelas();
-    $title = 'Edit User';
+        // Update data user lainnya
+        $user->nama = $request->nama;
+        $user->kelas_id = $request->kelas_id;
+        $user->jurusan = $request->jurusan;
+        $user->semester = $request->semester;
+        $user->fakultas_id = $request->fakultas_id;
 
-    return view ('edit_user',compact('user','kelas','title'));
-}
+        // Cek jika ada file foto baru
+        if ($request->hasFile('foto')) {
+            $oldFilename = $user->foto;
 
-public function update(Request $request, $id)
-{
-    $user = UserModel::findOrFail($id);
+            if ($oldFilename) {
+      $oldFilePath = public_path('storage/uploads/' . $oldFilename);
+                if (file_exists($oldFilePath)) {
+                    unlink($oldFilePath); // Hapus file lama jika ada
+                }
+            }
 
-    // Update data user lainnya
-    $user->nama = $request->nama;
-    $user->npm = $request->npm;
-    $user->kelas_id = $request->kelas_id;
+            $file = $request->file('foto');
+            $newFilename = time() . '_' . $file->getClientOriginalName();
+            $file->storeAs('uploads', $newFilename, 'public');
+            $user->foto = $newFilename; // Update path foto baru
+        }
 
-    // Cek apakah ada file foto yang di-upload
-    if ($request->hasFile('foto')) {
-        // Ambil nama file foto lama dari database
-        $oldFilename = $user->foto;
+        $user->save(); // Simpan perubahan ke database
 
-        // Hapus foto lama jika ada
-        if ($oldFilename) {
-            $oldFilePath = public_path('storage/uploads/' . $oldFilename);
-            // Cek apakah file lama ada dan hapus
+        // Redirect ke halaman list user setelah berhasil update
+        return redirect()->route('user.list')->with('success', 'User  berhasil diupdate');
+    }
+
+    // Menghapus user berdasarkan ID
+    public function destroy($id)
+    {
+        $user = UserModel::findOrFail($id);
+
+        // Hapus file foto jika ada
+        if ($user->foto) {
+            $oldFilePath = public_path('storage/uploads/' . $user->foto);
             if (file_exists($oldFilePath)) {
-                unlink($oldFilePath); // Hapus foto lama dari folder
+                unlink($oldFilePath); // Hapus file foto
             }
         }
 
-        // Simpan file baru dengan storeAs
-        $file = $request->file('foto');
-        $newFilename = time() . '_' . $file->getClientOriginalName();
-        $file->storeAs('uploads', $newFilename, 'public'); // Simpan ke folder storage/public/uploads
+        $user->delete(); // Hapus user dari database
 
-        // Update nama file di database
-        $user->foto = $newFilename;
+        // Redirect ke halaman list user setelah berhasil hapus
+        return redirect()->route('user.list')->with('success', 'User  berhasil dihapus');
     }
+    public function edit($id) {
+        // Find the user by ID or fail if not found
+        $user = UserModel::findOrFail($id);
+    
+        // Get list of classes
+        $kelasModel = new Kelas();
+        $kelas = $kelasModel->getKelas();
+    
+        // Get list of faculties
+        $fakultasModel = new Fakultas();  // Assuming you have a Fakultas model
+        $fakultas = $fakultasModel->getFakultas();  // Assuming this method exists
+    
+        // Set title for the page
+        $title = 'Edit User';
+    
+        // Return the edit user view with the required data
+        return view('edit_user', compact('user', 'kelas', 'fakultas', 'title'));
+    }
+    
+    
 
-    // Simpan perubahan pada user
-    $user->save();
+    // Menampilkan detail user berdasarkan ID
+    public function show($id)
+    {
+        $user = UserModel::findOrFail($id);
+        $kelas = Kelas::find($user->kelas_id);
+        $fakultas = Fakultas::find($user->fakultas_id); // Menampilkan fakultas
 
-    return redirect()->route('user.list')->with('success', 'User Berhasil di Update');
-}
-
-public function destroy($id){
-    $user = UserModel::findOrFail($id);
-    $user->delete();
-
-    return redirect()->to('/')->with('success', 'User Berhasil di Hapus');
-}
-
-public function show($id){
-
-    $user = UserModel::findOrFail($id);
-    $kelas = Kelas::find($user->kelas_id); // Jika ingin menampilkan nama kelas
-
-    return view('profile', [
-        'title' => 'Show User',
-        'user' => $user,
-        'nama_kelas' => $kelas ? $kelas->nama_kelas : null, // Pastikan nama kelas ada, jika tidak tampilkan null
-    ]);
-
-}
-
+        return view('profile', [
+            'title' => 'Show User',
+            'user' => $user,
+            'nama_kelas' => $kelas ? $kelas->nama_kelas : null,
+            'nama_fakultas' => $fakultas ? $fakultas->nama_fakultas : null, // Menampilkan nama fakultas jika ada
+        ]);
+    }
 }
